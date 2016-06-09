@@ -1,0 +1,5 @@
+clouds:
+  vpil-maas:
+    type: maas
+    auth-types: [oauth1]
+    endpoint: http://10.246.64.50/MAAS
