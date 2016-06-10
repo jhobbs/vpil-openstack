@@ -34,8 +34,8 @@ def clear_partitions(system_id, blockdevice):
 
 def create_partition(system_id, blockdevice_id, size, fstype,
                      label, mount_point):
-    results = cmd("partitions create %s %s size=536870912" % (
-        system_id, blockdevice_id))
+    results = cmd("partitions create %s %s size=%s" % (
+        system_id, blockdevice_id, size))
     partition_id = results['id']
     cmd("partition format %s %s %s fstype=%s label=%s" % (
         system_id, blockdevice_id, partition_id, fstype, label))
