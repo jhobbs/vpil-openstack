@@ -1,0 +1,9 @@
+sudo apt-get install python-glanceclient python-novaclient \
+	python-keystoneclient python-neutronclient
+
+. novarc
+
+./setup-images
+./setup-networks
+
+nova keypair-add mykey > ~/.ssh/id_rsa_cloud

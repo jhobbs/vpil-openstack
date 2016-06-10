@@ -1,0 +1,12 @@
+. novarc
+
+SERIES="trusty xenial"
+
+for series in $SERIES;
+do
+	if [ ! -f ~/images/$series-server-cloudimg-amd64-disk1.img ];
+	then
+		wget -O ~/images/$series-server-cloudimg-amd64-disk1.img http://cloud-images.ubuntu.com/$series/current/$series-server-cloudimg-amd64-disk1.img
+	fi
+	glance image-create --name="$series" --visibility public --progress --container-format=bare --disk-format=qcow2 < ~/images/$series-server-cloudimg-amd64-disk1.img
+done

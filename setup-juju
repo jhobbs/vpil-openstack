@@ -1,0 +1,5 @@
+sudo add-apt-repository ppa:juju/devel
+sudo apt-get update
+sudo apt-get install juju
+juju add-cloud vpil-maas clouds.yaml
+juju add-credential vpil-maas
