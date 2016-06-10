@@ -181,7 +181,7 @@ services:
     charm: cs:xenial/neutron-gateway-1
     num_units: 1
     options:
-      ext-port: eth1
+      ext-port: eno49
     to:
     - '0'
   neutron-openvswitch:
