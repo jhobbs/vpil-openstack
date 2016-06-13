@@ -2,3 +2,9 @@
 
 python3 ./neutron-ext-net -g 10.246.64.1 -c 10.246.64.0/21 -f 10.246.67.1:10.246.67.255 ext_net
 python3 ./neutron-tenant-net -t admin -r provider-router -N 10.246.64.1 internal 10.5.5.0/24
+
+neutron security-group-rule-create --protocol icmp \
+        --direction ingress default
+neutron security-group-rule-create --protocol tcp \
+        --port-range-min 22 --port-range-max 22 \
+        --direction ingress default
