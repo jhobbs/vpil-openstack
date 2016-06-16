@@ -1,10 +1,26 @@
+#!/bin/bash -x
 . novarc
 
-python3 ./neutron-ext-net -g 10.246.64.1 -c 10.246.64.0/21 -f 10.246.67.1:10.246.67.255 ext_net
-python3 ./neutron-tenant-net -t admin -r provider-router -N 10.246.64.1 internal 10.5.5.0/24
+function setup_region_networking {
+	local region=$1
+	local ext_gateway=$2
+	local ext_network=$3
+        local router_name=$4
+        local floating_range=$5
+        local ext_net_name=$6
+        local internal_dns=$7
+        local internal_network=$8
+        local internal_network_name=$9
 
-neutron security-group-rule-create --protocol icmp \
-        --direction ingress default
-neutron security-group-rule-create --protocol tcp \
-        --port-range-min 22 --port-range-max 22 \
-        --direction ingress default
+	OS_REGION_NAME=$region python3 ./neutron-ext-net -g $ext_gateway -c $ext_network -f $floating_range -r $router_name $ext_net_name
+	OS_REGION_NAME=$region python3 ./neutron-tenant-net -t admin -r $router_name -N $internal_dns $internal_network_name $internal_network
+
+	OS_REGION_NAME=$region neutron security-group-rule-create --protocol icmp \
+	        --direction ingress default
+	OS_REGION_NAME=$region neutron security-group-rule-create --protocol tcp \
+		--port-range-min 22 --port-range-max 22 \
+	        --direction ingress default
+}
+
+setup_region_networking RegionLXD 10.246.64.1 10.246.64.0/21 provider_router_lxd 10.246.68.1:10.246.68.255 ext_net_lxd 10.246.64.1 10.5.5.0/24 internal_lxd
+setup_region_networking RegionKVM 10.246.64.1 10.246.64.0/21 provider_router_kvm 10.246.69.1:10.246.69.255 ext_net_kvm 10.246.64.1 10.5.6.0/24 internal_kvm

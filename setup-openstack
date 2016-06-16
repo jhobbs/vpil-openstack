@@ -1,3 +1,4 @@
+#!/bin/bash -x
 sudo apt-get install python-glanceclient python-novaclient \
 	python-keystoneclient python-neutronclient
 
@@ -6,4 +7,6 @@ sudo apt-get install python-glanceclient python-novaclient \
 ./setup-images
 ./setup-networks
 
-nova keypair-add mykey > ~/.ssh/id_rsa_cloud
+OS_REGION_NAME=RegionKVM nova keypair-add mykey-kvm > ~/.ssh/id_rsa_cloud.kvm
+OS_REGION_NAME=RegionLXD nova keypair-add mykey-lxd > ~/.ssh/id_rsa_cloud.lxd
+chmod 700 ~/.ssh/id_rsa_cloud.kvm ~/.ssh/id_rsa_cloud.lxd

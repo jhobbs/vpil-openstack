@@ -38,6 +38,9 @@ if __name__ == '__main__':
     parser.add_option("-f", "--floating-range",
                       help="Range of floating IP's to use (separated by :).",
                       dest="floating_range", action="store", default=None)
+    parser.add_option("-r", "--router-name",
+                      help="Name of router to create.",
+                      dest="router_name", default='provider-router')
     (opts, args) = parser.parse_args()
 
     if len(args) != 1:
@@ -126,15 +129,15 @@ if __name__ == '__main__':
         logging.warning('Subnet %s already exists.', subnet_name)
         subnet = subnets['subnets'][0]
 
-    routers = quantum.list_routers(name='provider-router')
+    routers = quantum.list_routers(name=opts.router_name)
     if len(routers['routers']) == 0:
         logging.info('Creating provider router for external network access')
         router = quantum.create_router(
-                        {'router': {'name': 'provider-router', 'tenant_id': tenant_id}}
+                        {'router': {'name': opts.router_name, 'tenant_id': tenant_id}}
                         )['router']
         logging.info('New router created: %s', (router['id']))
     else:
-        logging.warning('Router provider-router already exists.')
+        logging.warning('Router %s already exists.' % (opts.router_name))
         router = routers['routers'][0]
 
     ports = quantum.list_ports(device_owner='network:router_gateway',

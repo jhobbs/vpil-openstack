@@ -1,6 +1,14 @@
+#!/bin/bash +x
 . novarc
 
+
 SERIES="trusty xenial"
+
+# Have to use the glance image URL directly because of a bug:
+# See https://bugs.launchpad.net/ubuntu/+source/python-glanceclient/+bug/1579768
+
+LXD_IMAGE_URL="http://`juju run --unit glance-region-lxd/0 'unit-get private-address'`:9292"
+KVM_IMAGE_URL="http://`juju run --unit glance-region-kvm/0 'unit-get private-address'`:9292"
 
 for series in $SERIES;
 do
@@ -8,5 +16,12 @@ do
 	then
 		wget -O ~/images/$series-server-cloudimg-amd64-disk1.img http://cloud-images.ubuntu.com/$series/current/$series-server-cloudimg-amd64-disk1.img
 	fi
-	glance image-create --name="$series" --visibility public --progress --container-format=bare --disk-format=qcow2 < ~/images/$series-server-cloudimg-amd64-disk1.img
+        glance --os-image-url=$KVM_IMAGE_URL image-create --name="$series" --visibility public --progress --container-format=bare --disk-format=qcow2 < ~/images/$series-server-cloudimg-amd64-disk1.img
+
+	if [ ! -f ~/images/$series-server-cloudimg-amd64-root.tar.gz ];
+	then
+		wget -O ~/images/$series-server-cloudimg-amd64-root.tar.gz http://cloud-images.ubuntu.com/$series/current/$series-server-cloudimg-amd64-root.tar.gz
+        fi
+        glance --os-image-url=$LXD_IMAGE_URL image-create --name="${series}-lxd" --visibility public --progress --container-format=bare --disk-format=root-tar --property architecture="x86_64" < ~/images/$series-server-cloudimg-amd64-root.tar.gz
+	
 done
