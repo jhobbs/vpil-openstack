@@ -187,7 +187,7 @@ services:
     annotations:
       gui-x: '500'
       gui-y: '0'
-    charm: cs:xenial/keystone-1
+    charm: cs:xenial/keystone
     num_units: 1
     options:
       region: "RegionLXD RegionKVM"
@@ -198,7 +198,7 @@ services:
     annotations:
       gui-x: '0'
       gui-y: '250'
-    charm: cs:xenial/percona-cluster-1
+    charm: cs:xenial/percona-cluster
     num_units: 1
     options:
       max-connections: 20000
@@ -208,7 +208,7 @@ services:
     annotations:
       gui-x: '500'
       gui-y: '-250'
-    charm: cs:xenial/openstack-dashboard-1
+    charm: cs:xenial/openstack-dashboard
     num_units: 1
     to:
     - lxd:0
@@ -216,14 +216,14 @@ services:
     annotations:
       gui-x: '1000'
       gui-y: '0'
-    charm: cs:xenial/ntp-0
+    charm: cs:xenial/ntp
     num_units: 0
 # RegionLXD
   rabbitmq-server-region-lxd:
     annotations:
       gui-x: '500'
       gui-y: '250'
-    charm: cs:xenial/rabbitmq-server-3
+    charm: cs:xenial/rabbitmq-server
     num_units: 1
     to:
     - lxd:0
@@ -231,7 +231,7 @@ services:
     annotations:
       gui-x: '0'
       gui-y: '250'
-    charm: cs:xenial/percona-cluster-1
+    charm: cs:xenial/percona-cluster
     num_units: 1
     options:
       max-connections: 20000
@@ -241,7 +241,7 @@ services:
     annotations:
       gui-x: '750'
       gui-y: '500'
-    charm: cs:xenial/ceph-mon-1
+    charm: cs:xenial/ceph-mon
     num_units: 5
     to:
     - lxd:1
@@ -253,7 +253,7 @@ services:
     annotations:
       gui-x: '1000'
       gui-y: '500'
-    charm: cs:xenial/ceph-osd-2
+    charm: cs:xenial/ceph-osd
     num_units: 5
     options:
       osd-devices: /dev/sdb
@@ -268,7 +268,7 @@ services:
     annotations:
       gui-x: '1000'
       gui-y: '250'
-    charm: cs:xenial/ceph-radosgw-3
+    charm: cs:xenial/ceph-radosgw
     num_units: 1
     options:
       use-embedded-webserver: true
@@ -279,7 +279,7 @@ services:
     annotations:
       gui-x: '250'
       gui-y: '0'
-    charm: cs:xenial/glance-1
+    charm: cs:xenial/glance
     num_units: 1
     options:
       region: RegionLXD
@@ -289,7 +289,7 @@ services:
     annotations:
       gui-x: '500'
       gui-y: '500'
-    charm: cs:xenial/neutron-api-1
+    charm: cs:xenial/neutron-api
     num_units: 1
     options:
       neutron-security-groups: true
@@ -301,7 +301,7 @@ services:
     annotations:
       gui-x: '0'
       gui-y: '0'
-    charm: cs:xenial/neutron-gateway-1
+    charm: cs:xenial/neutron-gateway
     num_units: 1
     options:
       ext-port: eno49
@@ -315,7 +315,7 @@ services:
     annotations:
       gui-x: '250'
       gui-y: '500'
-    charm: cs:xenial/neutron-openvswitch-2
+    charm: cs:xenial/neutron-openvswitch
     num_units: 0
     options:
       flat-network-providers: physnet1
@@ -326,7 +326,7 @@ services:
     annotations:
       gui-x: '0'
       gui-y: '500'
-    charm: cs:xenial/nova-cloud-controller-1
+    charm: cs:xenial/nova-cloud-controller
     num_units: 1
     options:
       network-manager: Neutron
@@ -337,7 +337,7 @@ services:
     annotations:
       gui-x: '250'
       gui-y: '250'
-    charm: cs:xenial/nova-compute-1
+    charm: cs:xenial/nova-compute
     num_units: 5
     options:
       enable-live-migration: true
@@ -354,7 +354,7 @@ services:
     annotations:
       gui-x: '750'
       gui-y: '0'
-    charm: cs:xenial/cinder-1
+    charm: cs:xenial/cinder
     num_units: 1
     options:
       block-device: None
@@ -366,14 +366,14 @@ services:
     annotations:
       gui-x: '750'
       gui-y: '250'
-    charm: cs:xenial/cinder-ceph-1
+    charm: cs:xenial/cinder-ceph
     num_units: 0
 # Region 2
   rabbitmq-server-region-kvm:
     annotations:
       gui-x: '500'
       gui-y: '250'
-    charm: cs:xenial/rabbitmq-server-3
+    charm: cs:xenial/rabbitmq-server
     num_units: 1
     to:
     - lxd:6
@@ -381,7 +381,7 @@ services:
     annotations:
       gui-x: '0'
       gui-y: '250'
-    charm: cs:xenial/percona-cluster-1
+    charm: cs:xenial/percona-cluster
     num_units: 1
     options:
       max-connections: 20000
@@ -391,7 +391,7 @@ services:
     annotations:
       gui-x: '750'
       gui-y: '500'
-    charm: cs:xenial/ceph-mon-1
+    charm: cs:xenial/ceph-mon
     num_units: 5
     to:
     - lxd:7
@@ -403,7 +403,7 @@ services:
     annotations:
       gui-x: '1000'
       gui-y: '500'
-    charm: cs:xenial/ceph-osd-2
+    charm: cs:xenial/ceph-osd
     num_units: 5
     options:
       osd-devices: /dev/sdb
@@ -418,7 +418,7 @@ services:
     annotations:
       gui-x: '1000'
       gui-y: '250'
-    charm: cs:xenial/ceph-radosgw-3
+    charm: cs:xenial/ceph-radosgw
     num_units: 1
     options:
       use-embedded-webserver: true
@@ -429,7 +429,7 @@ services:
     annotations:
       gui-x: '250'
       gui-y: '0'
-    charm: cs:xenial/glance-1
+    charm: cs:xenial/glance
     num_units: 1
     options:
       region: RegionKVM
@@ -439,7 +439,7 @@ services:
     annotations:
       gui-x: '500'
       gui-y: '500'
-    charm: cs:xenial/neutron-api-1
+    charm: cs:xenial/neutron-api
     num_units: 1
     options:
       region: RegionKVM
@@ -451,7 +451,7 @@ services:
     annotations:
       gui-x: '0'
       gui-y: '0'
-    charm: cs:xenial/neutron-gateway-1
+    charm: cs:xenial/neutron-gateway
     num_units: 1
     options:
       ext-port: eno49
@@ -465,7 +465,7 @@ services:
     annotations:
       gui-x: '250'
       gui-y: '500'
-    charm: cs:xenial/neutron-openvswitch-2
+    charm: cs:xenial/neutron-openvswitch
     num_units: 0
     options:
       flat-network-providers: physnet1
@@ -476,7 +476,7 @@ services:
     annotations:
       gui-x: '0'
       gui-y: '500'
-    charm: cs:xenial/nova-cloud-controller-1
+    charm: cs:xenial/nova-cloud-controller
     num_units: 1
     options:
       network-manager: Neutron
@@ -487,7 +487,7 @@ services:
     annotations:
       gui-x: '250'
       gui-y: '250'
-    charm: cs:xenial/nova-compute-1
+    charm: cs:xenial/nova-compute
     num_units: 5
     options:
       enable-live-migration: true
@@ -504,7 +504,7 @@ services:
     annotations:
       gui-x: '750'
       gui-y: '0'
-    charm: cs:xenial/cinder-1
+    charm: cs:xenial/cinder
     num_units: 1
     options:
       block-device: None
@@ -516,5 +516,5 @@ services:
     annotations:
       gui-x: '750'
       gui-y: '250'
-    charm: cs:xenial/cinder-ceph-1
+    charm: cs:xenial/cinder-ceph
     num_units: 0
