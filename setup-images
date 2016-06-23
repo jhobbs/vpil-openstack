@@ -22,6 +22,6 @@ do
 	then
 		wget -O ~/images/$series-server-cloudimg-amd64-root.tar.gz http://cloud-images.ubuntu.com/$series/current/$series-server-cloudimg-amd64-root.tar.gz
         fi
-        glance --os-image-url=$LXD_IMAGE_URL image-create --name="${series}-lxd" --visibility public --progress --container-format=bare --disk-format=root-tar --property architecture="x86_64" < ~/images/$series-server-cloudimg-amd64-root.tar.gz
+        glance --os-image-url=$LXD_IMAGE_URL image-create --name="${series}" --visibility public --progress --container-format=bare --disk-format=root-tar --property architecture="x86_64" < ~/images/$series-server-cloudimg-amd64-root.tar.gz
 	
 done
