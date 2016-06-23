@@ -1,6 +1,6 @@
 #!/bin/bash -x
-sudo apt-get install python-glanceclient python-novaclient \
-	python-keystoneclient python-neutronclient
+sudo apt-get install python3-glanceclient python3-novaclient \
+	python3-keystoneclient python3-neutronclient
 
 . novarc
 
