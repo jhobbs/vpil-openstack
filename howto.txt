@@ -1,0 +1,19 @@
+
+Setup MAAS:
+-----------
+Use setup-nodes.py to setup disk partitioning.
+maas root vlan update 0 0 mtu=9000
+
+
+Create a small (1 vcpu, 8gb ram, 50gb disk) VM on the MAAS server's host and enlist it.
+
+
+Deploy Openstack
+----------------
+Bootstrap to the vm on the maas host.
+Add dual-region-model
+juju deploy dual-region.yaml
+Wait for it to complete
+Run ./setup-openstack
+
+Test starting an instance.
