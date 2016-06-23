@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import argparse
 import json
 from subprocess import check_output
 
@@ -14,10 +14,14 @@ def cmd(cmd_string, parse=True):
        return output
 
 
-def get_nodes():
+def get_nodes(excluded=None):
+    if excluded is None:
+        excluded = []
     node_list = cmd("nodes read")
     for node in node_list:
         if 'service_set' in node:
+            continue
+        if node['system_id'] in excluded:
             continue
         yield node
 
@@ -57,12 +61,26 @@ def setup_root_blockdevice(system_id, blockdevice_id):
         fstype='ext4', label='root', mount_point='/')
 
 
+def setup_storage(node):
+    for blockdevice in node['blockdevice_set']:
+        clear_partitions(node['system_id'], blockdevice)
+        if blockdevice['path'] == '/dev/disk/by-dname/sda':
+            setup_root_blockdevice(node['system_id'], blockdevice['id'])
+
+
+def setup_networking(node):
+    pass
+
 def main():
-    for node in get_nodes():
-        for blockdevice in node['blockdevice_set']:
-            clear_partitions(node['system_id'], blockdevice)
-            if blockdevice['path'] == '/dev/disk/by-dname/sda':
-                setup_root_blockdevice(node['system_id'], blockdevice['id'])
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--exclude",
+        help="List of system IDs to exclude.",
+        default=None, nargs="+")
+    args = parser.parse_args()
+
+    for node in get_nodes(args.exclude):
+        setup_networking(node)
+        #setup_storage(node)
 
 
 if __name__ == '__main__':
