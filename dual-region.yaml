@@ -23,6 +23,18 @@ machines:
   '7':
     constraints: arch=amd64
     series: xenial
+  '8':
+    constraints: arch=amd64
+    series: xenial
+  '9':
+    constraints: arch=amd64
+    series: xenial
+  '10':
+    constraints: arch=amd64
+    series: xenial
+  '11':
+    constraints: arch=amd64
+    series: xenial
 relations:
 # Shared relations
 - - keystone:shared-db
@@ -84,7 +96,21 @@ relations:
   - ceph-mon-region-lxd:radosgw
 - - ceph-radosgw-region-lxd:identity-service
   - keystone:identity-service
-#RegionKVM relations
+- - cinder-region-lxd:image-service
+  - glance-region-lxd:image-service
+- - cinder-region-lxd:amqp
+  - rabbitmq-server-region-lxd:amqp
+- - cinder-region-lxd:identity-service
+  - keystone:identity-service
+- - cinder-region-lxd:cinder-volume-service
+  - nova-cloud-controller-region-lxd:cinder-volume-service
+- - cinder-ceph-region-lxd:storage-backend
+  - cinder-region-lxd:storage-backend
+- - cinder-region-lxd:shared-db
+  - mysql-region-lxd:shared-db
+- - ceph-mon-region-lxd:client
+  - cinder-ceph-region-lxd:ceph
+# RegionKVM relations
 - - nova-compute-region-kvm:amqp
   - rabbitmq-server-region-kvm:amqp
 - - neutron-gateway-region-kvm:amqp
@@ -139,6 +165,20 @@ relations:
   - ceph-mon-region-kvm:radosgw
 - - ceph-radosgw-region-kvm:identity-service
   - keystone:identity-service
+- - cinder-region-kvm:image-service
+  - glance-region-kvm:image-service
+- - cinder-region-kvm:amqp
+  - rabbitmq-server-region-kvm:amqp
+- - cinder-region-kvm:identity-service
+  - keystone:identity-service
+- - cinder-region-kvm:cinder-volume-service
+  - nova-cloud-controller-region-kvm:cinder-volume-service
+- - cinder-ceph-region-kvm:storage-backend
+  - cinder-region-kvm:storage-backend
+- - cinder-region-kvm:shared-db
+  - mysql-region-kvm:shared-db
+- - ceph-mon-region-kvm:client
+  - cinder-ceph-region-kvm:ceph
 
 series: xenial
 services:
@@ -153,7 +193,7 @@ services:
       region: "RegionLXD RegionKVM"
       admin-password: openstack
     to:
-    - lxc:0
+    - lxd:0
   keystone-db:
     annotations:
       gui-x: '0'
@@ -163,7 +203,7 @@ services:
     options:
       max-connections: 20000
     to:
-    - lxc:0
+    - lxd:0
   openstack-dashboard:
     annotations:
       gui-x: '500'
@@ -171,7 +211,7 @@ services:
     charm: cs:xenial/openstack-dashboard-1
     num_units: 1
     to:
-    - lxc:0
+    - lxd:0
   ntp:
     annotations:
       gui-x: '1000'
@@ -186,7 +226,7 @@ services:
     charm: cs:xenial/rabbitmq-server-3
     num_units: 1
     to:
-    - lxc:0
+    - lxd:0
   mysql-region-lxd:
     annotations:
       gui-x: '0'
@@ -196,23 +236,25 @@ services:
     options:
       max-connections: 20000
     to:
-    - lxc:0
+    - lxd:0
   ceph-mon-region-lxd:
     annotations:
       gui-x: '750'
       gui-y: '500'
     charm: cs:xenial/ceph-mon-1
-    num_units: 3
+    num_units: 5
     to:
-    - lxc:1
-    - lxc:2
-    - lxc:3
+    - lxd:1
+    - lxd:2
+    - lxd:3
+    - lxd:4
+    - lxd:5
   ceph-osd-region-lxd:
     annotations:
       gui-x: '1000'
       gui-y: '500'
     charm: cs:xenial/ceph-osd-2
-    num_units: 3
+    num_units: 5
     options:
       osd-devices: /dev/sdb
       osd-reformat: 'yes'
@@ -220,6 +262,8 @@ services:
     - '1'
     - '2'
     - '3'
+    - '4'
+    - '5'
   ceph-radosgw-region-lxd:
     annotations:
       gui-x: '1000'
@@ -230,7 +274,7 @@ services:
       use-embedded-webserver: true
       region: RegionLXD
     to:
-    - lxc:0
+    - lxd:0
   glance-region-lxd:
     annotations:
       gui-x: '250'
@@ -240,7 +284,7 @@ services:
     options:
       region: RegionLXD
     to:
-    - lxc:0
+    - lxd:0
   neutron-api-region-lxd:
     annotations:
       gui-x: '500'
@@ -250,8 +294,9 @@ services:
     options:
       neutron-security-groups: true
       region: RegionLXD
+      flat-network-providers: physnet1
     to:
-    - lxc:0
+    - lxd:0
   neutron-gateway-region-lxd:
     annotations:
       gui-x: '0'
@@ -260,6 +305,10 @@ services:
     num_units: 1
     options:
       ext-port: eno49
+      flat-network-providers: physnet1
+      bridge-mappings: physnet1:br-vnf-data
+      data-port: br-vnf-data:eno50
+      #instance-mtu: 9000
     to:
     - '0'
   neutron-openvswitch-region-lxd:
@@ -268,6 +317,11 @@ services:
       gui-y: '500'
     charm: cs:xenial/neutron-openvswitch-2
     num_units: 0
+    options:
+      flat-network-providers: physnet1
+      bridge-mappings: physnet1:br-vnf-data
+      data-port: br-vnf-data:eno50
+      disable-security-groups: true
   nova-cloud-controller-region-lxd:
     annotations:
       gui-x: '0'
@@ -278,13 +332,13 @@ services:
       network-manager: Neutron
       region: RegionLXD
     to:
-    - lxc:0
+    - lxd:0
   nova-compute-region-lxd:
     annotations:
       gui-x: '250'
       gui-y: '250'
     charm: cs:xenial/nova-compute-1
-    num_units: 3
+    num_units: 5
     options:
       enable-live-migration: true
       enable-resize: true
@@ -294,6 +348,26 @@ services:
     - '1'
     - '2'
     - '3'
+    - '4'
+    - '5'
+  cinder-region-lxd:
+    annotations:
+      gui-x: '750'
+      gui-y: '0'
+    charm: cs:xenial/cinder-1
+    num_units: 1
+    options:
+      block-device: None
+      glance-api-version: 2
+      region: RegionKVM
+    to:
+    - lxd:0
+  cinder-ceph-region-lxd:
+    annotations:
+      gui-x: '750'
+      gui-y: '250'
+    charm: cs:xenial/cinder-ceph-1
+    num_units: 0
 # Region 2
   rabbitmq-server-region-kvm:
     annotations:
@@ -302,7 +376,7 @@ services:
     charm: cs:xenial/rabbitmq-server-3
     num_units: 1
     to:
-    - lxc:4
+    - lxd:6
   mysql-region-kvm:
     annotations:
       gui-x: '0'
@@ -312,30 +386,34 @@ services:
     options:
       max-connections: 20000
     to:
-    - lxc:4
+    - lxd:6
   ceph-mon-region-kvm:
     annotations:
       gui-x: '750'
       gui-y: '500'
     charm: cs:xenial/ceph-mon-1
-    num_units: 3
+    num_units: 5
     to:
-    - lxc:5
-    - lxc:6
-    - lxc:7
+    - lxd:7
+    - lxd:8
+    - lxd:9
+    - lxd:10
+    - lxd:11
   ceph-osd-region-kvm:
     annotations:
       gui-x: '1000'
       gui-y: '500'
     charm: cs:xenial/ceph-osd-2
-    num_units: 3
+    num_units: 5
     options:
       osd-devices: /dev/sdb
       osd-reformat: 'yes'
     to:
-    - '5'
-    - '6'
     - '7'
+    - '8'
+    - '9'
+    - '10'
+    - '11'
   ceph-radosgw-region-kvm:
     annotations:
       gui-x: '1000'
@@ -346,7 +424,7 @@ services:
       use-embedded-webserver: true
       region: RegionKVM
     to:
-    - lxc:4
+    - lxd:6
   glance-region-kvm:
     annotations:
       gui-x: '250'
@@ -356,7 +434,7 @@ services:
     options:
       region: RegionKVM
     to:
-    - lxc:4
+    - lxd:6
   neutron-api-region-kvm:
     annotations:
       gui-x: '500'
@@ -366,8 +444,9 @@ services:
     options:
       region: RegionKVM
       neutron-security-groups: true
+      flat-network-providers: physnet1
     to:
-    - lxc:4
+    - lxd:6
   neutron-gateway-region-kvm:
     annotations:
       gui-x: '0'
@@ -376,14 +455,23 @@ services:
     num_units: 1
     options:
       ext-port: eno49
+      flat-network-providers: physnet1
+      bridge-mappings: physnet1:br-vnf-data
+      data-port: br-vnf-data:eno50
+      #instance-mtu: 9000
     to:
-    - '4'
+    - '6'
   neutron-openvswitch-region-kvm:
     annotations:
       gui-x: '250'
       gui-y: '500'
     charm: cs:xenial/neutron-openvswitch-2
     num_units: 0
+    options:
+      flat-network-providers: physnet1
+      bridge-mappings: physnet1:br-vnf-data
+      data-port: br-vnf-data:eno50
+      disable-security-groups: true
   nova-cloud-controller-region-kvm:
     annotations:
       gui-x: '0'
@@ -394,19 +482,39 @@ services:
       network-manager: Neutron
       region: RegionKVM
     to:
-    - lxc:4
+    - lxd:6
   nova-compute-region-kvm:
     annotations:
       gui-x: '250'
       gui-y: '250'
     charm: cs:xenial/nova-compute-1
-    num_units: 3
+    num_units: 5
     options:
       enable-live-migration: true
       enable-resize: true
       migration-auth-type: ssh
       virt-type: kvm
     to:
-    - '5'
-    - '6'
     - '7'
+    - '8'
+    - '9'
+    - '10'
+    - '11'
+  cinder-region-kvm:
+    annotations:
+      gui-x: '750'
+      gui-y: '0'
+    charm: cs:xenial/cinder-1
+    num_units: 1
+    options:
+      block-device: None
+      glance-api-version: 2
+      region: RegionKVM
+    to:
+    - lxd:6
+  cinder-ceph-region-kvm:
+    annotations:
+      gui-x: '750'
+      gui-y: '250'
+    charm: cs:xenial/cinder-ceph-1
+    num_units: 0
