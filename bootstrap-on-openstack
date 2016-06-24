@@ -2,6 +2,7 @@
 
 . novarc
 
+juju kill-controller --yes vpil-openstack-controller
 sudo apt-get install apache2
 sudo rm -rf /var/www/html/openstack-images
 
