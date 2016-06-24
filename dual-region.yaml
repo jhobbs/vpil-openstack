@@ -289,7 +289,7 @@ services:
     annotations:
       gui-x: '500'
       gui-y: '500'
-    charm: cs:xenial/neutron-api
+    charm: cs:~jason-hobbs/xenial/neutron-api
     num_units: 1
     options:
       neutron-security-groups: true
@@ -307,7 +307,7 @@ services:
       ext-port: eno49
       flat-network-providers: physnet1
       bridge-mappings: physnet1:br-vnf-data
-      data-port: br-vnf-data:eno50
+      data-port: br-vnf-data:bond0
       #instance-mtu: 9000
     to:
     - '0'
@@ -320,7 +320,7 @@ services:
     options:
       flat-network-providers: physnet1
       bridge-mappings: physnet1:br-vnf-data
-      data-port: br-vnf-data:eno50
+      data-port: br-vnf-data:bond0
       disable-security-groups: true
   nova-cloud-controller-region-lxd:
     annotations:
@@ -439,7 +439,7 @@ services:
     annotations:
       gui-x: '500'
       gui-y: '500'
-    charm: cs:xenial/neutron-api
+    charm: cs:~jason-hobbs/xenial/neutron-api
     num_units: 1
     options:
       region: RegionKVM
@@ -457,7 +457,7 @@ services:
       ext-port: eno49
       flat-network-providers: physnet1
       bridge-mappings: physnet1:br-vnf-data
-      data-port: br-vnf-data:eno50
+      data-port: br-vnf-data:bond0
       #instance-mtu: 9000
     to:
     - '6'
@@ -470,7 +470,7 @@ services:
     options:
       flat-network-providers: physnet1
       bridge-mappings: physnet1:br-vnf-data
-      data-port: br-vnf-data:eno50
+      data-port: br-vnf-data:bond0
       disable-security-groups: true
   nova-cloud-controller-region-kvm:
     annotations:
