@@ -3,6 +3,7 @@
 if [ $# -ne 2 ];
 then
 	echo "syntax: $0 <kvm|lxd> <1|2>"
+	exit 1
 fi
 
 . novarc
@@ -26,18 +27,11 @@ sudo cp -R $LOCAL_IMAGES_DIR/images $APACHE_IMAGES_DIR
 sudo chmod -R 755 $APACHE_IMAGES_DIR
 
 ETH_IP=`ifconfig eth0 | grep "inet addr" | cut -d ':' -f 2 | cut -d ' ' -f 1`
-
 IMAGE_METADATA_URL="http://${ETH_IP}/openstack-images-${HYPERVISOR}/"
-
 
 if [ $JUJU_VERSION == 2 ]
 then
-	envsubst < openstack-cloud.yaml.tmpl > openstack-cloud.yaml
-	juju kill-controller --yes vpil-openstack-controller
-	juju unregister vpil-openstack-controller
-	juju add-cloud --replace vpil-openstack openstack-cloud.yaml
-	juju add-credential --replace -f openstack-credentials.yaml vpil-openstack
-	juju bootstrap vpil-openstack-controller vpil-openstack --upload-tools --config image-metadata-url=$IMAGE_METADATA_URL
+	HYPERVISOR=$HYPERVISOR REGION=$REGION envsubst < openstack-cloud.yaml.tmpl > openstack-cloud-${HYPERVISOR}.yaml
 else
-	OS_AUTH_URL=$OS_AUTH_URL HYPERVISOR=$HYPERVISOR IMAGE_METADATA_URL=$IMAGE_METADATA_URL REGION=$REGION envsubst < juju-openstack-env.yaml.part.tmpl > juju-openstack-env-$HYPERVISOR.yaml.part	
+	HYPERVISOR=$HYPERVISOR IMAGE_METADATA_URL=$IMAGE_METADATA_URL REGION=$REGION envsubst < juju-openstack-env.yaml.part.tmpl > juju-openstack-env-$HYPERVISOR.yaml.part	
 fi

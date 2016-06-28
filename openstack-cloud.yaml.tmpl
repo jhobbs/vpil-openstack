@@ -1,7 +1,7 @@
 clouds:
-  vpil-openstack:
+  vpil-openstack-${HYPERVISOR}:
     type: openstack
     auth-types: [userpass]
     regions:
-      RegionKVM:
+      ${REGION}:
         endpoint: ${OS_AUTH_URL}

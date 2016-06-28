@@ -1,0 +1,20 @@
+#!/bin/bash -x
+
+ETH_IP=`ifconfig eth0 | grep "inet addr" | cut -d ':' -f 2 | cut -d ' ' -f 1`
+
+function bootstrap() {
+	local hypervisor=$1
+	
+	juju switch vpil-maas-controller
+	local image_metadata_url="http://${ETH_IP}/openstack-images-${hypervisor}/"
+	./generate-juju-config $hypervisor 2
+	juju kill-controller --yes vpil-openstack-${hypervisor}-controller
+	juju unregister --yes vpil-openstack-${hypervisor}-controller
+	juju add-cloud --replace vpil-openstack-${hypervisor} openstack-cloud-${hypervisor}.yaml
+	rm -rf openstack-cloud-${hypervisor}.yaml
+	juju add-credential --replace -f openstack-credentials.yaml vpil-openstack-${hypervisor}
+	juju bootstrap vpil-openstack-${hypervisor}-controller vpil-openstack-${hypervisor} --upload-tools --config image-metadata-url=$image_metadata_url
+}
+
+bootstrap lxd
+bootstrap kvm
