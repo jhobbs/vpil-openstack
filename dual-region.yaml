@@ -82,34 +82,10 @@ relations:
   - mysql-region-lxd:shared-db
 - - nova-cloud-controller-region-lxd:neutron-api
   - neutron-api-region-lxd:neutron-api
-- - ceph-mon-region-lxd:client
-  - nova-compute-region-lxd:ceph
-- - ceph-mon-region-lxd:client
-  - glance-region-lxd:ceph
-- - ceph-osd-region-lxd:mon
-  - ceph-mon-region-lxd:osd
 - - ntp:juju-info
   - nova-compute-region-lxd:juju-info
 - - ntp:juju-info
   - neutron-gateway-region-lxd:juju-info
-- - ceph-radosgw-region-lxd:mon
-  - ceph-mon-region-lxd:radosgw
-- - ceph-radosgw-region-lxd:identity-service
-  - keystone:identity-service
-- - cinder-region-lxd:image-service
-  - glance-region-lxd:image-service
-- - cinder-region-lxd:amqp
-  - rabbitmq-server-region-lxd:amqp
-- - cinder-region-lxd:identity-service
-  - keystone:identity-service
-- - cinder-region-lxd:cinder-volume-service
-  - nova-cloud-controller-region-lxd:cinder-volume-service
-- - cinder-ceph-region-lxd:storage-backend
-  - cinder-region-lxd:storage-backend
-- - cinder-region-lxd:shared-db
-  - mysql-region-lxd:shared-db
-- - ceph-mon-region-lxd:client
-  - cinder-ceph-region-lxd:ceph
 # RegionKVM relations
 - - nova-compute-region-kvm:amqp
   - rabbitmq-server-region-kvm:amqp
@@ -151,34 +127,10 @@ relations:
   - mysql-region-kvm:shared-db
 - - nova-cloud-controller-region-kvm:neutron-api
   - neutron-api-region-kvm:neutron-api
-- - ceph-mon-region-kvm:client
-  - nova-compute-region-kvm:ceph
-- - ceph-mon-region-kvm:client
-  - glance-region-kvm:ceph
-- - ceph-osd-region-kvm:mon
-  - ceph-mon-region-kvm:osd
 - - ntp:juju-info
   - nova-compute-region-kvm:juju-info
 - - ntp:juju-info
   - neutron-gateway-region-kvm:juju-info
-- - ceph-radosgw-region-kvm:mon
-  - ceph-mon-region-kvm:radosgw
-- - ceph-radosgw-region-kvm:identity-service
-  - keystone:identity-service
-- - cinder-region-kvm:image-service
-  - glance-region-kvm:image-service
-- - cinder-region-kvm:amqp
-  - rabbitmq-server-region-kvm:amqp
-- - cinder-region-kvm:identity-service
-  - keystone:identity-service
-- - cinder-region-kvm:cinder-volume-service
-  - nova-cloud-controller-region-kvm:cinder-volume-service
-- - cinder-ceph-region-kvm:storage-backend
-  - cinder-region-kvm:storage-backend
-- - cinder-region-kvm:shared-db
-  - mysql-region-kvm:shared-db
-- - ceph-mon-region-kvm:client
-  - cinder-ceph-region-kvm:ceph
 
 series: xenial
 services:
@@ -235,44 +187,6 @@ services:
     num_units: 1
     options:
       max-connections: 20000
-    to:
-    - lxd:0
-  ceph-mon-region-lxd:
-    annotations:
-      gui-x: '750'
-      gui-y: '500'
-    charm: cs:xenial/ceph-mon
-    num_units: 5
-    to:
-    - lxd:1
-    - lxd:2
-    - lxd:3
-    - lxd:4
-    - lxd:5
-  ceph-osd-region-lxd:
-    annotations:
-      gui-x: '1000'
-      gui-y: '500'
-    charm: cs:xenial/ceph-osd
-    num_units: 5
-    options:
-      osd-devices: /dev/sdb
-      osd-reformat: 'yes'
-    to:
-    - '1'
-    - '2'
-    - '3'
-    - '4'
-    - '5'
-  ceph-radosgw-region-lxd:
-    annotations:
-      gui-x: '1000'
-      gui-y: '250'
-    charm: cs:xenial/ceph-radosgw
-    num_units: 1
-    options:
-      use-embedded-webserver: true
-      region: RegionLXD
     to:
     - lxd:0
   glance-region-lxd:
@@ -350,24 +264,6 @@ services:
     - '3'
     - '4'
     - '5'
-  cinder-region-lxd:
-    annotations:
-      gui-x: '750'
-      gui-y: '0'
-    charm: cs:xenial/cinder
-    num_units: 1
-    options:
-      block-device: None
-      glance-api-version: 2
-      region: RegionKVM
-    to:
-    - lxd:0
-  cinder-ceph-region-lxd:
-    annotations:
-      gui-x: '750'
-      gui-y: '250'
-    charm: cs:xenial/cinder-ceph
-    num_units: 0
 # Region 2
   rabbitmq-server-region-kvm:
     annotations:
@@ -385,44 +281,6 @@ services:
     num_units: 1
     options:
       max-connections: 20000
-    to:
-    - lxd:6
-  ceph-mon-region-kvm:
-    annotations:
-      gui-x: '750'
-      gui-y: '500'
-    charm: cs:xenial/ceph-mon
-    num_units: 5
-    to:
-    - lxd:7
-    - lxd:8
-    - lxd:9
-    - lxd:10
-    - lxd:11
-  ceph-osd-region-kvm:
-    annotations:
-      gui-x: '1000'
-      gui-y: '500'
-    charm: cs:xenial/ceph-osd
-    num_units: 5
-    options:
-      osd-devices: /dev/sdb
-      osd-reformat: 'yes'
-    to:
-    - '7'
-    - '8'
-    - '9'
-    - '10'
-    - '11'
-  ceph-radosgw-region-kvm:
-    annotations:
-      gui-x: '1000'
-      gui-y: '250'
-    charm: cs:xenial/ceph-radosgw
-    num_units: 1
-    options:
-      use-embedded-webserver: true
-      region: RegionKVM
     to:
     - lxd:6
   glance-region-kvm:
@@ -500,21 +358,3 @@ services:
     - '9'
     - '10'
     - '11'
-  cinder-region-kvm:
-    annotations:
-      gui-x: '750'
-      gui-y: '0'
-    charm: cs:xenial/cinder
-    num_units: 1
-    options:
-      block-device: None
-      glance-api-version: 2
-      region: RegionKVM
-    to:
-    - lxd:6
-  cinder-ceph-region-kvm:
-    annotations:
-      gui-x: '750'
-      gui-y: '250'
-    charm: cs:xenial/cinder-ceph
-    num_units: 0
