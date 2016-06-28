@@ -1,0 +1,9 @@
+  vpil-openstack-${HYPERVISOR}:
+    type: openstack
+    image-metadata-url: ${IMAGE_METADATA_URL}
+    auth-url: ${OS_AUTH_URL}
+    tenant-name: admin
+    region: ${REGION}
+    auth-mode: userpass
+    username: admin
+    password: openstack

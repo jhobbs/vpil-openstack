@@ -1,0 +1,17 @@
+#!/bin/bash -xe
+
+./generate-juju-config lxd 1
+./generate-juju-config kvm 1
+
+
+rm -rf ~/.juju/environments
+echo "environments:" > ~/.juju/environments.yaml
+cat juju-openstack-env-lxd.yaml.part >> ~/.juju/environments.yaml
+rm juju-openstack-env-lxd.yaml.part
+cat juju-openstack-env-kvm.yaml.part >> ~/.juju/environments.yaml
+rm juju-openstack-env-kvm.yaml.part
+
+juju-1 switch vpil-openstack-lxd
+juju-1 bootstrap --metadata-source /home/ubuntu/openstack-base/lxd-images/ --upload-tools
+juju-1 switch vpil-openstack-kvm
+juju-1 bootstrap --metadata-source /home/ubuntu/openstack-base/kvm-images/ --upload-tools
