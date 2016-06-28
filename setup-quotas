@@ -1,0 +1,13 @@
+#!/bin/bash -xe
+. novarc
+tenant=$(keystone tenant-list | awk '/admin/ {print $2}')
+
+QUOTAS="instances cores ram floating-ips fixed-ips security-groups security-group-rules key-pairs"
+
+for region in RegionKVM RegionLXD;
+do
+	for quota in $QUOTAS;
+	do
+		nova --os-region-name=$region quota-update --${quota} -1 $tenant
+	done
+done

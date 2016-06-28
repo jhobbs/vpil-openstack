@@ -4,6 +4,7 @@ sudo apt-get install python-glanceclient python-novaclient \
 
 . novarc
 
+./setup-quotas
 ./setup-images
 ./setup-networks
 
