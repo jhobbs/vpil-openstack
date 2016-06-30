@@ -75,9 +75,9 @@ def setup_networking(node):
             print("Found a bond on %s" % (node['system_id']))
             cmd("interface delete %s %s" % (node['system_id'], interface['id']),
                 False)
-        if interface['name'] in ['ens1f1', 'ens1f0']:
+        if interface['name'] in ['eno49', 'eno50']:
             bond_children_ids.append(interface['id'])
-    cmd("interfaces create-bond %s parents=%s parents=%s bond_mode=balance-alb bond_xmit_hash_policy=layer3+4 name=bond0" % (
+    cmd("interfaces create-bond %s parents=%s parents=%s bond_mode=802.3ad name=bond0 bond_xmit_hash_policy=layer2+3" % (
         node['system_id'], bond_children_ids[0], bond_children_ids[1]))
 
 
@@ -91,7 +91,7 @@ def main():
 
     for node in get_nodes(args.exclude):
         setup_networking(node)
-        #setup_storage(node)
+        setup_storage(node)
 
 
 if __name__ == '__main__':
