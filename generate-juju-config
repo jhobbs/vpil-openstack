@@ -1,37 +1,28 @@
-#!/bin/bash
+#!/bin/bash -xe
 
-if [ $# -ne 2 ];
+if [ $# -ne 0 ];
 then
-	echo "syntax: $0 <kvm|lxd> <1|2>"
+	echo "syntax: $0"
 	exit 1
 fi
 
+. common-config
 . novarc
 
-HYPERVISOR=$1
-JUJU_VERSION=$2
-REGION=Region${HYPERVISOR^^}
-LOCAL_IMAGES_DIR=./${HYPERVISOR}-images
-APACHE_IMAGES_DIR=/var/www/html/openstack-images-$HYPERVISOR
+LOCAL_IMAGES_DIR=./images
+APACHE_IP=`juju run -m ${CONTROLLER}:${MODEL} --unit apache2/0 'unit-get private-address'`
 
 sudo apt-get install apache2
+BLEH=<<END
 sudo rm -rf $APACHE_IMAGES_DIR
 
-IMAGE_URL="http://`juju run --unit glance-region-${HYPERVISOR}/0 'unit-get private-address'`:9292"
-
-export IMAGE_ID=`glance --os-image-url=$IMAGE_URL image-list | grep xenial | awk {'print $2'}`
 rm -rf $LOCAL_IMAGES_DIR
 mkdir $LOCAL_IMAGES_DIR
-juju metadata generate-image -r $REGION -u $OS_AUTH_URL -d $LOCAL_IMAGES_DIR -i $IMAGE_ID
-sudo cp -R $LOCAL_IMAGES_DIR/images $APACHE_IMAGES_DIR
-sudo chmod -R 755 $APACHE_IMAGES_DIR
+export IMAGE_ID=`glance image-list | grep xenial | grep qcow2 | awk {'print $2'}`
+juju metadata generate-image -r RegionOne -u $OS_AUTH_URL -d $LOCAL_IMAGES_DIR -i $IMAGE_ID --virt-type="kvm"
+export IMAGE_ID=`glance image-list | grep xenial | grep root-tar | awk {'print $2'}`
+juju metadata generate-image -r RegionOne -u $OS_AUTH_URL -d $LOCAL_IMAGES_DIR -i $IMAGE_ID --virt-type="lxd"
+END
 
-ETH_IP=`ifconfig eth0 | grep "inet addr" | cut -d ':' -f 2 | cut -d ' ' -f 1`
-IMAGE_METADATA_URL="http://${ETH_IP}/openstack-images-${HYPERVISOR}/"
-
-if [ $JUJU_VERSION == 2 ]
-then
-	HYPERVISOR=$HYPERVISOR REGION=$REGION envsubst < openstack-cloud.yaml.tmpl > openstack-cloud-${HYPERVISOR}.yaml
-else
-	HYPERVISOR=$HYPERVISOR IMAGE_METADATA_URL=$IMAGE_METADATA_URL REGION=$REGION envsubst < juju-openstack-env.yaml.part.tmpl > juju-openstack-env-$HYPERVISOR.yaml.part	
-fi
+IMAGE_METADATA_URL="http://${APACHE_IP}/openstack-images/"
+envsubst < openstack-cloud.yaml.tmpl > openstack-cloud.yaml
