@@ -19,10 +19,12 @@ sudo rm -rf $APACHE_IMAGES_DIR
 
 IMAGE_URL="http://`juju run --unit glance-region-${HYPERVISOR}/0 'unit-get private-address'`:9292"
 
-export IMAGE_ID=`glance --os-image-url=$IMAGE_URL image-list | grep xenial | awk {'print $2'}`
+export XENIAL_IMAGE_ID=`glance --os-image-url=$IMAGE_URL image-list | grep xenial | awk {'print $2'}`
+export TRUSTY_IMAGE_ID=`glance --os-image-url=$IMAGE_URL image-list | grep trusty | awk {'print $2'}`
 rm -rf $LOCAL_IMAGES_DIR
 mkdir $LOCAL_IMAGES_DIR
-juju metadata generate-image -r $REGION -u $OS_AUTH_URL -d $LOCAL_IMAGES_DIR -i $IMAGE_ID
+juju metadata generate-image -r $REGION -u $OS_AUTH_URL -d $LOCAL_IMAGES_DIR -i $XENIAL_IMAGE_ID -s xenial
+juju metadata generate-image -r $REGION -u $OS_AUTH_URL -d $LOCAL_IMAGES_DIR -i $TRUSTY_IMAGE_ID -s trusty
 sudo cp -R $LOCAL_IMAGES_DIR/images $APACHE_IMAGES_DIR
 sudo chmod -R 755 $APACHE_IMAGES_DIR
 
