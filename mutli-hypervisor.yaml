@@ -1,18 +1,18 @@
 machines:
   '0':
-    constraints: tags=flagler
+    constraints: arch=amd64
     series: xenial
   '1':
-    constraints: tags=hayward-00
+    constraints: arch=amd64
     series: xenial
   '2':
-    constraints: tags=hayward-01
+    constraints: arch=amd64
     series: xenial
   '3':
-    constraints: tags=hayward-02
+    constraints: arch=amd64
     series: xenial
   '4':
-    constraints: tags=hayward-07
+    constraints: arch=amd64
     series: xenial
 relations:
 - - keystone:shared-db
@@ -156,9 +156,10 @@ services:
     charm: cs:xenial/neutron-gateway
     num_units: 1
     options:
-      ext-port: eth1
+      ext-port: ens1f0
       flat-network-providers: physnet1
-      #instance-mtu: 9000
+      bridge-mappings: physnet1:br-vnf-data
+      data-port: br-vnf-data:bond0
     to:
     - '0'
   neutron-openvswitch:
@@ -170,7 +171,7 @@ services:
     options:
       flat-network-providers: physnet1
       bridge-mappings: physnet1:br-vnf-data
-      data-port: br-vnf-data:eth1
+      data-port: br-vnf-data:bond0
       disable-security-groups: true
   nova-cloud-controller:
     annotations:
@@ -213,5 +214,6 @@ services:
   apache2:
     charm: cs:apache2
     num_units: 1
+    series: trusty
     to:
     - lxd:0

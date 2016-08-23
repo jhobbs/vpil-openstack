@@ -18,13 +18,21 @@ Create a small (1 vcpu, 8gb ram, 50gb disk) VM on the MAAS server's host and enl
 
 Bootstrap to the vm on the maas host:
 
-    juju bootstrap vpil-maas-controller vpil-maas --to=juju-controller-vm.maas
+    juju bootstrap vpil-maas-controller vpil-maas --to=juju-controller-vm.maas --config test-mode=True
 
-Add dual-region-model
+Deploy OpenStack
 
-    juju deploy dual-region.yaml
+    juju deploy mutli-hypervisor.yaml
 
 Wait for it to complete
+
+For OIL, set up this symlink:
+
+    ln -s common-config.oil common-config
+
+For VPIL, set up this symlink:
+
+    ln -s common-config.vpil-network common-config
 
 Setup OpenStack
 
