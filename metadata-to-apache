@@ -1,9 +1,0 @@
-#!/bin/bash -xe
-
-juju ssh apache2/0 "sudo rm -f /etc/apache2/sites-enabled/000-default.conf"
-juju ssh apache2/0 "sudo ln -s /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-enabled/000-default.conf"
-juju ssh apache2/0 "sudo service apache2 restart"
-juju ssh apache2/0 "sudo rm -rf images /var/www/html/openstack-images/"
-juju scp -- -r images/images apache2/0:images
-juju ssh apache2/0 "sudo mv images /var/www/html/openstack-images/"
-juju ssh apache2/0 "sudo chmod -R 755 /var/www/html/openstack-images/"
