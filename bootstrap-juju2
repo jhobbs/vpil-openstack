@@ -1,6 +1,7 @@
 #!/bin/bash -xe
 
 . common-config
+. novarc
 
 APACHE_IP=`juju run -m ${CONTROLLER}:${MODEL} --unit apache2/0 'unit-get private-address'`
 

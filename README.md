@@ -40,6 +40,6 @@ Setup OpenStack
 
 Bootstrap juju on OpenStack
 ---------------------------
-To bootstrap juju 2 on both LXD and KVM regions:
+To bootstrap juju 2:
 
     ./bootstrap-juju2

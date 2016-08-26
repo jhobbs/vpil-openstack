@@ -15,7 +15,7 @@ do
 	fi
         glance image-create --name="${series}-kvm" --progress \
 		--container-format=bare --disk-format=qcow2 \
-		--property hypervisor-type=qemu \
+		--property hypervisor_type=QEMU \
 		--file ~/images/$series-server-cloudimg-amd64-disk1.img
 
 	if [ ! -f ~/images/$series-server-cloudimg-amd64-root.tar.gz ];
@@ -25,7 +25,7 @@ do
         glance image-create --name="${series}-lxd" --progress \
 		--container-format=bare --disk-format=root-tar \
 		--property architecture="x86_64" \
-		--property hypervisor-type=lxd \
+		--property hypervisor_type=lxd \
 		--file ~/images/$series-server-cloudimg-amd64-root.tar.gz
 	
 done
