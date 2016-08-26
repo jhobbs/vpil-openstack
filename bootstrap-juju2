@@ -25,7 +25,8 @@ function bootstrap() {
 		--keep-broken --upload-tools \
 		--config image-metadata-url=$image_metadata_url \
 		--config network=${net_id} \
-		--config use-floating-ip=true
+		--config use-floating-ip=true \
+		--config test-mode=True
 }
 
 bootstrap
