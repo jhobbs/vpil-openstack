@@ -1,0 +1,243 @@
+machines:
+  '0':
+    constraints: arch=amd64
+    series: xenial
+  '1':
+    constraints: arch=amd64
+    series: xenial
+  '2':
+    constraints: arch=amd64
+    series: xenial
+  '3':
+    constraints: arch=amd64
+    series: xenial
+  '4':
+    constraints: arch=amd64
+    series: xenial
+  '5':
+    constraints: arch=amd64
+    series: xenial
+  '6':
+    constraints: arch=amd64
+    series: xenial
+  '7':
+    constraints: arch=amd64
+    series: xenial
+  '8':
+    constraints: arch=amd64
+    series: xenial
+  '9':
+    constraints: arch=amd64
+    series: xenial
+  '10':
+    constraints: arch=amd64
+    series: xenial
+relations:
+- - keystone:shared-db
+  - keystone-db:shared-db
+- - openstack-dashboard:identity-service
+  - keystone:identity-service
+- - nova-compute-lxd:amqp
+  - rabbitmq-server:amqp
+- - nova-compute-kvm:amqp
+  - rabbitmq-server:amqp
+- - neutron-gateway:amqp
+  - rabbitmq-server:amqp
+- - nova-cloud-controller:identity-service
+  - keystone:identity-service
+- - glance:identity-service
+  - keystone:identity-service
+- - neutron-api:identity-service
+  - keystone:identity-service
+- - neutron-openvswitch:neutron-plugin-api
+  - neutron-api:neutron-plugin-api
+- - neutron-api:shared-db
+  - mysql:shared-db
+- - neutron-api:amqp
+  - rabbitmq-server:amqp
+- - neutron-gateway:neutron-plugin-api
+  - neutron-api:neutron-plugin-api
+- - glance:shared-db
+  - mysql:shared-db
+- - glance:amqp
+  - rabbitmq-server:amqp
+- - nova-cloud-controller:image-service
+  - glance:image-service
+- - nova-compute-lxd:image-service
+  - glance:image-service
+- - nova-compute-kvm:image-service
+  - glance:image-service
+- - nova-cloud-controller:cloud-compute
+  - nova-compute-lxd:cloud-compute
+- - nova-cloud-controller:cloud-compute
+  - nova-compute-kvm:cloud-compute
+- - nova-cloud-controller:amqp
+  - rabbitmq-server:amqp
+- - nova-cloud-controller:quantum-network-service
+  - neutron-gateway:quantum-network-service
+- - nova-compute-lxd:neutron-plugin
+  - neutron-openvswitch:neutron-plugin
+- - nova-compute-kvm:neutron-plugin
+  - neutron-openvswitch:neutron-plugin
+- - neutron-openvswitch:amqp
+  - rabbitmq-server:amqp
+- - nova-cloud-controller:shared-db
+  - mysql:shared-db
+- - nova-cloud-controller:neutron-api
+  - neutron-api:neutron-api
+- - ntp:juju-info
+  - nova-compute-lxd:juju-info
+- - ntp:juju-info
+  - nova-compute-kvm:juju-info
+- - ntp:juju-info
+  - neutron-gateway:juju-info
+
+series: xenial
+services:
+# Shared
+  keystone:
+    annotations:
+      gui-x: '500'
+      gui-y: '0'
+    charm: cs:xenial/keystone
+    num_units: 1
+    options:
+      admin-password: openstack
+    to:
+    - lxd:0
+  keystone-db:
+    annotations:
+      gui-x: '0'
+      gui-y: '250'
+    charm: cs:xenial/percona-cluster
+    num_units: 1
+    options:
+      max-connections: 20000
+    to:
+    - lxd:0
+  openstack-dashboard:
+    annotations:
+      gui-x: '500'
+      gui-y: '-250'
+    charm: cs:xenial/openstack-dashboard
+    num_units: 1
+    to:
+    - lxd:0
+  ntp:
+    annotations:
+      gui-x: '1000'
+      gui-y: '0'
+    charm: cs:xenial/ntp
+    num_units: 0
+# RegionLXD
+  rabbitmq-server:
+    annotations:
+      gui-x: '500'
+      gui-y: '250'
+    charm: cs:xenial/rabbitmq-server
+    num_units: 1
+    to:
+    - lxd:0
+  mysql:
+    annotations:
+      gui-x: '0'
+      gui-y: '250'
+    charm: cs:xenial/percona-cluster
+    num_units: 1
+    options:
+      max-connections: 20000
+    to:
+    - lxd:0
+  glance:
+    annotations:
+      gui-x: '250'
+      gui-y: '0'
+    charm: cs:xenial/glance
+    num_units: 1
+    to:
+    - lxd:0
+  neutron-api:
+    annotations:
+      gui-x: '500'
+      gui-y: '500'
+    charm: cs:~jason-hobbs/xenial/neutron-api
+    num_units: 1
+    options:
+      neutron-security-groups: true
+      flat-network-providers: physnet1
+    to:
+    - lxd:0
+  neutron-gateway:
+    annotations:
+      gui-x: '0'
+      gui-y: '0'
+    charm: cs:xenial/neutron-gateway
+    num_units: 1
+    options:
+      ext-port: ens1f0
+      flat-network-providers: physnet1
+      bridge-mappings: physnet1:br-vnf-data
+      data-port: br-vnf-data:bond0
+    to:
+    - '0'
+  neutron-openvswitch:
+    annotations:
+      gui-x: '250'
+      gui-y: '500'
+    charm: cs:xenial/neutron-openvswitch
+    num_units: 0
+    options:
+      flat-network-providers: physnet1
+      bridge-mappings: physnet1:br-vnf-data
+      data-port: br-vnf-data:bond0
+      disable-security-groups: true
+  nova-cloud-controller:
+    annotations:
+      gui-x: '0'
+      gui-y: '500'
+    charm: cs:xenial/nova-cloud-controller
+    num_units: 1
+    options:
+      network-manager: Neutron
+    to:
+    - lxd:0
+  nova-compute-lxd:
+    annotations:
+      gui-x: '250'
+      gui-y: '250'
+    charm: cs:xenial/nova-compute
+    num_units: 5
+    options:
+      enable-live-migration: true
+      enable-resize: true
+      migration-auth-type: ssh
+      virt-type: lxd
+    to:
+    - '1'
+    - '2'
+    - '3'
+    - '4'
+    - '5'
+  nova-compute-kvm:
+    annotations:
+      gui-x: '250'
+      gui-y: '250'
+    charm: cs:xenial/nova-compute
+    num_units: 5
+    options:
+      enable-live-migration: true
+      enable-resize: true
+      migration-auth-type: ssh
+      virt-type: kvm
+    to:
+    - '6'
+    - '7'
+    - '8'
+    - '9'
+    - '10'
+  apache2:
+    charm: cs:apache2
+    num_units: 1
+    series: trusty
+    to:
+    - lxd:0

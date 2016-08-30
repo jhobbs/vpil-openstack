@@ -2,12 +2,16 @@
 . novarc
 tenant=$(keystone tenant-list | awk '/admin/ {print $2}')
 
-QUOTAS="instances cores ram floating-ips fixed-ips security-groups security-group-rules key-pairs"
+NOVA_QUOTAS="instances cores ram floating-ips fixed-ips security-groups security-group-rules key-pairs"
 
-for region in RegionKVM RegionLXD;
+for quota in $NOVA_QUOTAS;
 do
-	for quota in $QUOTAS;
-	do
-		nova --os-region-name=$region quota-update --${quota} -1 $tenant
-	done
+	nova quota-update --${quota} -1 $tenant
+done
+
+NEUTRON_QUOTAS="security-group floatingip port"
+
+for quota in $NEUTRON_QUOTAS;
+do
+	neutron quota-update --${quota} -1 --tenant-id $tenant
 done

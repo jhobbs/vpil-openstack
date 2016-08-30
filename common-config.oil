@@ -1,0 +1,21 @@
+# The provider network is the network attached to the interface
+# configured as data-port in neutron-openvswitch config. These
+# variables describe that network and will need to be adjusted
+# to match your network.
+PROVIDER_SUBNET=10.244.192.0/18
+PROVIDER_GATEWAY=10.244.192.1
+PROVIDER_DNS=10.244.192.1
+
+# This is the internal non routable tenant network
+TENANT_SUBNET=192.168.1.0/24
+
+# These are the IPs given to instances in the OpenStack cloud.
+# They need to fall within the provider subnet and they need
+# to be a range that won't conflict with other things in that
+# network.
+INSTANCE_IP_START=10.244.197.1
+INSTANCE_IP_END=10.244.197.255
+
+CONTROLLER=ci-oil-slave15
+MODEL=vpil
+

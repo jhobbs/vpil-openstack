@@ -1,19 +1,21 @@
 #!/bin/bash -x
 . novarc
 
-function setup_region_networking {
-	local region=$1
-	local network=$2
-	local gateway=$3
-	local dns=$4
-	local allocation_pool=$5
+. common-config
 
-	neutron --os-region=$region net-create flat-provider-network --provider:network_type flat --provider:physical_network physnet1
-	neutron --os-region-name=$region subnet-create --name flat-provider-subnet --gateway $gateway --dns-nameserver $dns --allocation-pool $allocation_pool flat-provider-network $network
+function setup_networking {
+	local network=$1
+	local gateway=$2
+	local dns=$3
+	local allocation_pool=$4
+
+	neutron net-create flat-provider-network --provider:network_type flat --provider:physical_network physnet1
+	neutron subnet-create --name flat-provider-subnet --gateway $gateway --dns-nameserver $dns --allocation-pool $allocation_pool flat-provider-network $network
 }
 
-setup_region_networking RegionLXD 10.246.64.0/21 10.246.64.1 10.246.64.1 "start=10.246.70.1,end=10.246.70.100"
-setup_region_networking RegionKVM 10.246.64.0/21 10.246.64.1 10.246.64.1 "start=10.246.70.101,end=10.246.70.200"
+setup_networking $PROVIDER_SUBNET $PROVIDER_GATEWAY $PROVIDER_DNS "start=$INSTANCE_IP_START,end=$INSTANCE_IP_END"
 
-juju ssh neutron-gateway-region-lxd/0 "sudo sh -c 'echo \"enable_isolated_metadata = True\" >> /etc/neutron/dhcp_agent.ini && service neutron-dhcp-agent restart'"
-juju ssh neutron-gateway-region-kvm/0 "sudo sh -c 'echo \"enable_isolated_metadata = True\" >> /etc/neutron/dhcp_agent.ini && service neutron-dhcp-agent restart'"
+juju ssh neutron-gateway/0 "sudo sh -c 'echo \"enable_isolated_metadata = True\" >> /etc/neutron/dhcp_agent.ini && service neutron-dhcp-agent restart'"
+
+python3 ./neutron-ext-net -g 10.246.64.1 -c 10.246.64.0/21 -f 10.246.67.1:10.246.67.255 ext_net
+python3 ./neutron-tenant-net -t admin -r provider-router -N 10.246.64.1 internal 10.5.5.0/24

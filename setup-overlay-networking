@@ -1,0 +1,6 @@
+#!/bin/bash -xe
+. common-config
+. novarc
+
+./neutron-ext-net -g $PROVIDER_GATEWAY -c $PROVIDER_SUBNET -f $INSTANCE_IP_START:$INSTANCE_IP_END ext_net
+./neutron-tenant-net -t admin -r provider-router -N $PROVIDER_DNS internal $TENANT_SUBNET

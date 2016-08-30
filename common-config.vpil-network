@@ -1,0 +1,18 @@
+# The provider network is the network attached to the interface
+# configured as data-port in neutron-openvswitch config. These
+# variables describe that network and will need to be adjusted
+# to match your network.
+PROVIDER_SUBNET=10.246.64.0/21
+PROVIDER_GATEWAY=10.246.64.1
+PROVIDER_DNS=10.246.64.1
+
+# These are the IPs given to instances in the OpenStack cloud.
+# They need to fall within the provider subnet and they need
+# to be a range that won't conflict with other things in that
+# network.
+INSTANCE_IP_START=10.246.70.1
+INSTANCE_IP_END=10.246.70.100
+
+CONTROLLER=vpil-maas-controller
+MODEL=default
+
