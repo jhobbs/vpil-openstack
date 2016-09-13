@@ -22,7 +22,7 @@ Bootstrap to the vm on the maas host:
 
 Deploy OpenStack
 
-    juju deploy mutli-hypervisor.yaml
+    juju deploy multi-hypervisor.yaml
 
 Wait for it to complete
 
