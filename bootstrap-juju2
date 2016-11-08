@@ -21,7 +21,7 @@ function bootstrap() {
 	juju add-cloud --replace vpil-openstack openstack-cloud.yaml
 	juju add-credential --replace -f openstack-credentials.yaml vpil-openstack
         local net_id=`nova net-list | grep internal | awk {'print $2'}`
-	juju bootstrap vpil-openstack-controller vpil-openstack \
+	juju bootstrap vpil-openstack vpil-openstack-controller \
 		--keep-broken \
 		--config image-metadata-url=$image_metadata_url \
 		--config network=${net_id} \
