@@ -21,12 +21,17 @@ function bootstrap() {
 	juju add-cloud --replace vpil-openstack openstack-cloud.yaml
 	juju add-credential --replace -f openstack-credentials.yaml vpil-openstack
         local net_id=`nova net-list | grep internal | awk {'print $2'}`
-	juju bootstrap vpil-openstack-controller vpil-openstack \
-		--keep-broken --upload-tools \
+	juju bootstrap vpil-openstack vpil-openstack-controller \
+		--keep-broken \
 		--config image-metadata-url=$image_metadata_url \
 		--config network=${net_id} \
 		--config use-floating-ip=true \
 		--config test-mode=True
+	juju model-defaults \
+		image-metadata-url=$image_metadata_url \
+		network=${net_id} \
+		use-floating-ip=true \
+		test-mode=True
 }
 
 bootstrap

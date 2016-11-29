@@ -12,7 +12,7 @@ fi
 LOCAL_IMAGES_DIR=./images
 APACHE_IP=`juju run -m ${CONTROLLER}:${MODEL} --unit apache2/0 'unit-get private-address'`
 
-juju set-config apache2 "vhost_http_template=$(base64 < apache2-template.jinja2)"
+juju config apache2 "vhost_http_template=$(base64 < apache2-template.jinja2)"
 
 rm -rf $LOCAL_IMAGES_DIR
 mkdir $LOCAL_IMAGES_DIR
